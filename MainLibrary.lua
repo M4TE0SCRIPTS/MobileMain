@@ -5,7 +5,6 @@ local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
-local Player = Players.LocalPlayer
 
 function Library:CreateWindow(config)
     config = config or {}
@@ -14,7 +13,6 @@ function Library:CreateWindow(config)
     local useKey = config.KeySystem or false
     local validKeys = config.Key or {""}
 
-    -- Evitar duplicados
     if CoreGui:FindFirstChild("CustomLibraryGUI") then
         CoreGui.CustomLibraryGUI:Destroy()
     end
@@ -24,7 +22,6 @@ function Library:CreateWindow(config)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- Sistema de Notificaciones con Animación Banner
     function Library:Notify(title, message)
         local Banner = Instance.new("Frame")
         Banner.Size = UDim2.new(0, 260, 0, 50)
@@ -76,7 +73,6 @@ function Library:CreateWindow(config)
     local WindowFunctions = {}
 
     local function loadMainGUI()
-        -- Botón Flotante para Abrir/Cerrar (Animado)
         local OpenBtn = Instance.new("TextButton")
         OpenBtn.Size = UDim2.new(0, 45, 0, 45)
         OpenBtn.Position = UDim2.new(0, 10, 0.4, 0)
@@ -97,9 +93,8 @@ function Library:CreateWindow(config)
         OpenStroke.Thickness = 2
         OpenStroke.Parent = OpenBtn
 
-        -- Ventana Principal
         local MainFrame = Instance.new("Frame")
-        MainFrame.Size = UDim2.new(0, 0, 0, 0) -- Inicia en 0 para animación de entrada
+        MainFrame.Size = UDim2.new(0, 0, 0, 0)
         MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
         MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
         MainFrame.BorderSizePixel = 0
@@ -115,16 +110,14 @@ function Library:CreateWindow(config)
         MainStroke.Thickness = 1.5
         MainStroke.Parent = MainFrame
 
-        -- Animación de Apertura de la Ventana Principal
-        MainFrame:TweenSizeAndPosition(UDim2.new(0, 320, 0, 320), UDim2.new(0.5, -160, 0.5, -160), "Out", "Back", 0.4, true)
+        MainFrame:TweenSizeAndPosition(UDim2.new(0, 340, 0, 340), UDim2.new(0.5, -170, 0.5, -170), "Out", "Back", 0.4, true)
 
-        -- Header
         local Title = Instance.new("TextLabel")
-        Title.Size = UDim2.new(1, -40, 0, 20)
-        Title.Position = UDim2.new(0, 10, 0, 5)
+        Title.Size = UDim2.new(1, -40, 0, 22)
+        Title.Position = UDim2.new(0, 12, 0, 8)
         Title.BackgroundTransparency = 1
         Title.TextColor3 = Color3.fromRGB(0, 255, 128)
-        Title.TextSize = 14
+        Title.TextSize = 15
         Title.Font = Enum.Font.GothamBold
         Title.TextXAlignment = Enum.TextXAlignment.Left
         Title.Text = name
@@ -132,22 +125,21 @@ function Library:CreateWindow(config)
 
         local SubTitleLabel = Instance.new("TextLabel")
         SubTitleLabel.Size = UDim2.new(1, -40, 0, 15)
-        SubTitleLabel.Position = UDim2.new(0, 10, 0, 22)
+        SubTitleLabel.Position = UDim2.new(0, 12, 0, 28)
         SubTitleLabel.BackgroundTransparency = 1
         SubTitleLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
-        SubTitleLabel.TextSize = 10
+        SubTitleLabel.TextSize = 11
         SubTitleLabel.Font = Enum.Font.Gotham
         SubTitleLabel.TextXAlignment = Enum.TextXAlignment.Left
         SubTitleLabel.Text = subtitle
         SubTitleLabel.Parent = MainFrame
 
-        -- Botón Minimizar (-)
         local MinBtn = Instance.new("TextButton")
         MinBtn.Size = UDim2.new(0, 30, 0, 30)
-        MinBtn.Position = UDim2.new(1, -35, 0, 5)
+        MinBtn.Position = UDim2.new(1, -35, 0, 8)
         MinBtn.BackgroundTransparency = 1
         MinBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
-        MinBtn.TextSize = 14
+        MinBtn.TextSize = 16
         MinBtn.Font = Enum.Font.GothamBold
         MinBtn.Text = "-"
         MinBtn.Parent = MainFrame
@@ -162,13 +154,13 @@ function Library:CreateWindow(config)
         OpenBtn.MouseButton1Click:Connect(function()
             OpenBtn.Visible = false
             MainFrame.Visible = true
-            MainFrame:TweenSizeAndPosition(UDim2.new(0, 320, 0, 320), UDim2.new(0.5, -160, 0.5, -160), "Out", "Back", 0.3, true)
+            MainFrame:TweenSizeAndPosition(UDim2.new(0, 340, 0, 340), UDim2.new(0.5, -170, 0.5, -170), "Out", "Back", 0.3, true)
         end)
 
-        -- Contenedor de Pestañas
+        -- Contenedor de Botones de Pestañas (Mejor Posicionado)
         local TabButtonsFrame = Instance.new("ScrollingFrame")
-        TabButtonsFrame.Size = UDim2.new(1, -20, 0, 30)
-        TabButtonsFrame.Position = UDim2.new(0, 10, 0, 42)
+        TabButtonsFrame.Size = UDim2.new(1, -24, 0, 35)
+        TabButtonsFrame.Position = UDim2.new(0, 12, 0, 50)
         TabButtonsFrame.BackgroundTransparency = 1
         TabButtonsFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
         TabButtonsFrame.ScrollBarThickness = 0
@@ -177,13 +169,13 @@ function Library:CreateWindow(config)
         local TabListLayout = Instance.new("UIListLayout")
         TabListLayout.FillDirection = Enum.FillDirection.Horizontal
         TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        TabListLayout.Padding = UDim.new(0, 5)
+        TabListLayout.Padding = UDim.new(0, 6)
         TabListLayout.Parent = TabButtonsFrame
 
-        -- Contenedor de Páginas
+        -- Contenedor de Páginas (Ajustado)
         local PagesContainer = Instance.new("Frame")
-        PagesContainer.Size = UDim2.new(1, -20, 1, -85)
-        PagesContainer.Position = UDim2.new(0, 10, 0, 78)
+        PagesContainer.Size = UDim2.new(1, -24, 1, -95)
+        PagesContainer.Position = UDim2.new(0, 12, 0, 90)
         PagesContainer.BackgroundTransparency = 1
         PagesContainer.Parent = MainFrame
 
@@ -193,10 +185,10 @@ function Library:CreateWindow(config)
             local Tab = {}
 
             local TabBtn = Instance.new("TextButton")
-            TabBtn.Size = UDim2.new(0, 85, 1, 0)
+            TabBtn.Size = UDim2.new(0, 90, 0, 30)
             TabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
             TabBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
-            TabBtn.TextSize = 11
+            TabBtn.TextSize = 12
             TabBtn.Font = Enum.Font.GothamMedium
             TabBtn.Text = tabName
             TabBtn.Parent = TabButtonsFrame
@@ -215,7 +207,7 @@ function Library:CreateWindow(config)
 
             local ScrollLayout = Instance.new("UIListLayout")
             ScrollLayout.SortOrder = Enum.SortOrder.LayoutOrder
-            ScrollLayout.Padding = UDim.new(0, 6)
+            ScrollLayout.Padding = UDim.new(0, 8)
             ScrollLayout.Parent = TabScroll
 
             ScrollLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -244,10 +236,10 @@ function Library:CreateWindow(config)
 
             function Tab:AddToggle(name, callback)
                 local btn = Instance.new("TextButton")
-                btn.Size = UDim2.new(1, 0, 0, 30)
+                btn.Size = UDim2.new(1, 0, 0, 35)
                 btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
                 btn.TextColor3 = Color3.fromRGB(220, 220, 220)
-                btn.TextSize = 11
+                btn.TextSize = 12
                 btn.Font = Enum.Font.GothamMedium
                 btn.Text = name .. ": OFF"
                 btn.Parent = TabScroll
@@ -272,29 +264,29 @@ function Library:CreateWindow(config)
 
             function Tab:AddSlider(name, min, max, default, callback)
                 local container = Instance.new("Frame")
-                container.Size = UDim2.new(1, 0, 0, 45)
+                container.Size = UDim2.new(1, 0, 0, 50)
                 container.BackgroundTransparency = 1
                 container.Parent = TabScroll
 
                 local label = Instance.new("TextLabel")
-                label.Size = UDim2.new(1, 0, 0, 18)
+                label.Size = UDim2.new(1, 0, 0, 20)
                 label.BackgroundTransparency = 1
                 label.TextColor3 = Color3.fromRGB(200, 200, 200)
-                label.TextSize = 11
+                label.TextSize = 12
                 label.Font = Enum.Font.Gotham
                 label.TextXAlignment = Enum.TextXAlignment.Left
                 label.Text = "  " .. name .. ": " .. default
                 label.Parent = container
 
                 local bgSlider = Instance.new("TextButton")
-                bgSlider.Size = UDim2.new(1, 0, 0, 18)
-                bgSlider.Position = UDim2.new(0, 0, 0, 20)
+                bgSlider.Size = UDim2.new(1, 0, 0, 20)
+                bgSlider.Position = UDim2.new(0, 0, 0, 22)
                 bgSlider.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
                 bgSlider.Text = ""
                 bgSlider.Parent = container
 
                 local scCorner = Instance.new("UICorner")
-                scCorner.CornerRadius = UDim.new(0, 4)
+                scCorner.CornerRadius = UDim.new(0, 6)
                 scCorner.Parent = bgSlider
 
                 local fill = Instance.new("Frame")
@@ -304,7 +296,7 @@ function Library:CreateWindow(config)
                 fill.Parent = bgSlider
 
                 local fCorner = Instance.new("UICorner")
-                fCorner.CornerRadius = UDim.new(0, 4)
+                fCorner.CornerRadius = UDim.new(0, 6)
                 fCorner.Parent = fill
 
                 local dragging = false
@@ -321,7 +313,7 @@ function Library:CreateWindow(config)
                 end)
 
                 UserInputService.InputChanged:Connect(function(input)
-                    if dragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
+                    if dragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.MouseMovement) then
                         local pos = math.clamp((input.Position.X - bgSlider.AbsolutePosition.X) / bgSlider.AbsoluteSize.X, 0, 1)
                         fill.Size = UDim2.new(pos, 0, 1, 0)
                         local val = math.floor(min + ((max - min) * pos))
@@ -333,12 +325,12 @@ function Library:CreateWindow(config)
 
             function Tab:AddTextBox(placeholder, callback)
                 local box = Instance.new("TextBox")
-                box.Size = UDim2.new(1, 0, 0, 30)
+                box.Size = UDim2.new(1, 0, 0, 35)
                 box.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
                 box.TextColor3 = Color3.fromRGB(255, 255, 255)
                 box.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
                 box.PlaceholderText = placeholder
-                box.TextSize = 11
+                box.TextSize = 12
                 box.Font = Enum.Font.Gotham
                 box.Text = ""
                 box.Parent = TabScroll

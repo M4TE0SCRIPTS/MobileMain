@@ -1,4 +1,4 @@
--- [[ Librería de UI para Roblox (Delta Mobile) ]] --
+-- [[ Librería de UI Optimizada y Animada para Roblox (Delta Mobile) ]] --
 local Library = {}
 
 local Players = game:GetService("Players")
@@ -24,12 +24,12 @@ function Library:CreateWindow(config)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- Sistema de Notificaciones
+    -- Sistema de Notificaciones con Animación Banner
     function Library:Notify(title, message)
         local Banner = Instance.new("Frame")
         Banner.Size = UDim2.new(0, 260, 0, 50)
         Banner.Position = UDim2.new(0.5, -130, 0, -60)
-        Banner.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        Banner.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
         Banner.BorderSizePixel = 0
         Banner.Parent = ScreenGui
 
@@ -73,12 +73,10 @@ function Library:CreateWindow(config)
         end)
     end
 
-    local mainLoaded = false
-    local function loadMainGUI()
-        if mainLoaded then return end
-        mainLoaded = true
+    local WindowFunctions = {}
 
-        -- Botón Flotante para Abrir/Cerrar
+    local function loadMainGUI()
+        -- Botón Flotante para Abrir/Cerrar (Animado)
         local OpenBtn = Instance.new("TextButton")
         OpenBtn.Size = UDim2.new(0, 45, 0, 45)
         OpenBtn.Position = UDim2.new(0, 10, 0.4, 0)
@@ -87,6 +85,7 @@ function Library:CreateWindow(config)
         OpenBtn.TextSize = 12
         OpenBtn.Font = Enum.Font.GothamBold
         OpenBtn.Text = "GUI"
+        OpenBtn.Visible = false
         OpenBtn.Parent = ScreenGui
 
         local OpenCorner = Instance.new("UICorner")
@@ -100,8 +99,8 @@ function Library:CreateWindow(config)
 
         -- Ventana Principal
         local MainFrame = Instance.new("Frame")
-        MainFrame.Size = UDim2.new(0, 320, 0, 320)
-        MainFrame.Position = UDim2.new(0.5, -160, 0.5, -160)
+        MainFrame.Size = UDim2.new(0, 0, 0, 0) -- Inicia en 0 para animación de entrada
+        MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
         MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
         MainFrame.BorderSizePixel = 0
         MainFrame.ClipsDescendants = true
@@ -115,6 +114,9 @@ function Library:CreateWindow(config)
         MainStroke.Color = Color3.fromRGB(0, 255, 128)
         MainStroke.Thickness = 1.5
         MainStroke.Parent = MainFrame
+
+        -- Animación de Apertura de la Ventana Principal
+        MainFrame:TweenSizeAndPosition(UDim2.new(0, 320, 0, 320), UDim2.new(0.5, -160, 0.5, -160), "Out", "Back", 0.4, true)
 
         -- Header
         local Title = Instance.new("TextLabel")
@@ -151,13 +153,16 @@ function Library:CreateWindow(config)
         MinBtn.Parent = MainFrame
 
         MinBtn.MouseButton1Click:Connect(function()
-            MainFrame.Visible = false
-            OpenBtn.Visible = true
+            MainFrame:TweenSizeAndPosition(UDim2.new(0, 0, 0, 0), UDim2.new(0.5, 0, 0.5, 0), "In", "Quad", 0.3, true, function()
+                MainFrame.Visible = false
+                OpenBtn.Visible = true
+            end)
         end)
 
         OpenBtn.MouseButton1Click:Connect(function()
             OpenBtn.Visible = false
             MainFrame.Visible = true
+            MainFrame:TweenSizeAndPosition(UDim2.new(0, 320, 0, 320), UDim2.new(0.5, -160, 0.5, -160), "Out", "Back", 0.3, true)
         end)
 
         -- Contenedor de Pestañas
@@ -182,7 +187,6 @@ function Library:CreateWindow(config)
         PagesContainer.BackgroundTransparency = 1
         PagesContainer.Parent = MainFrame
 
-        local WindowFunctions = {}
         local firstTab = true
 
         function WindowFunctions:CreateTab(tabName)
@@ -231,13 +235,11 @@ function Library:CreateWindow(config)
                 end
                 for _, child in pairs(TabButtonsFrame:GetChildren()) do
                     if child:IsA("TextButton") then
-                        child.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-                        child.TextColor3 = Color3.fromRGB(180, 180, 180)
+                        TweenService:Create(child, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(30, 30, 30), TextColor3 = Color3.fromRGB(180, 180, 180)}):Play()
                     end
                 end
                 TabScroll.Visible = true
-                TabBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 90)
-                TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                TweenService:Create(TabBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 180, 90), TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
             end)
 
             function Tab:AddToggle(name, callback)
@@ -258,12 +260,10 @@ function Library:CreateWindow(config)
                 btn.MouseButton1Click:Connect(function()
                     active = not active
                     if active then
-                        btn.BackgroundColor3 = Color3.fromRGB(0, 180, 90)
-                        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 180, 90), TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
                         btn.Text = name .. ": ON"
                     else
-                        btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-                        btn.TextColor3 = Color3.fromRGB(220, 220, 220)
+                        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(35, 35, 35), TextColor3 = Color3.fromRGB(220, 220, 220)}):Play()
                         btn.Text = name .. ": OFF"
                     end
                     callback(active)
@@ -356,8 +356,6 @@ function Library:CreateWindow(config)
 
             return Tab
         end
-
-        return WindowFunctions
     end
 
     if useKey then
@@ -434,7 +432,7 @@ function Library:CreateWindow(config)
         loadMainGUI()
     end
 
-    return Library
+    return WindowFunctions
 end
 
 return Library

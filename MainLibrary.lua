@@ -1,4 +1,4 @@
--- [[ Librería de UI Optimizada y Animada para Roblox (Delta Mobile) ]] --
+-- [[ Librería de UI Optimizada para Roblox (Delta Mobile) ]] --
 local Library = {}
 
 local Players = game:GetService("Players")
@@ -10,108 +10,6 @@ function Library:CreateWindow(config)
     config = config or {}
     local name = config.Name or "Hub"
     local subtitle = config.Subtitle or ""
-    local useKey = config.KeySystem or false
-    local validKeys = config.Key or {""}
-
-    if CoreGui:FindFirstChild("CustomLibraryGUI") then
-        CoreGui.CustomLibraryGUI:Destroy()
-    end
-
-    local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "CustomLibraryGUI"
-    ScreenGui.Parent = CoreGui
-    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-    function Library:Notify(title, message)
-        local Banner = Instance.new("Frame")
-        Banner.Size = UDim2.new(0, 260, 0, 50)
-        Banner.Position = UDim2.new(0.5, -130, 0, -60)
-        Banner.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-        Banner.BorderSizePixel = 0
-        Banner.Parent = ScreenGui
-
-        local UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(0, 10)
-        UICorner.Parent = Banner
-
-        local UIStroke = Instance.new("UIStroke")
-        UIStroke.Color = Color3.fromRGB(0, 255, 128)
-        UIStroke.Thickness = 2
-        UIStroke.Parent = Banner
-
-        local TitleLabel = Instance.new("TextLabel")
-        TitleLabel.Size = UDim2.new(1, -10, 0, 20)
-        TitleLabel.Position = UDim2.new(0, 5, 0, 5)
-        TitleLabel.BackgroundTransparency = 1
-        TitleLabel.TextColor3 = Color3.fromRGB(0, 255, 128)
-        TitleLabel.TextSize = 14
-        TitleLabel.Font = Enum.Font.GothamBold
-        TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-        TitleLabel.Text = title
-        TitleLabel.Parent = Banner
-
-        local MsgLabel = Instance.new("TextLabel")
-        MsgLabel.Size = UDim2.new(1, -10, 0, 20)
-        MsgLabel.Position = UDim2.new(0, 5, 0, 25)
-        MsgLabel.BackgroundTransparency = 1
-        MsgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        MsgLabel.TextSize = 12
-        MsgLabel.Font = Enum.Font.Gotham
-        MsgLabel.TextXAlignment = Enum.TextXAlignment.Left
-        MsgLabel.Text = message
-        MsgLabel.Parent = Banner
-
-        Banner:TweenPosition(UDim2.new(0.5, -130, 0, 20), "Out", "Back", 0.5, true)
-        
-        task.delay(3, function()
-            Banner:TweenPosition(UDim2.new(0.5, -130, 0, -60), "In", "Quad", 0.5, true)
-            task.wait(0.5)
-            Banner:Destroy()
-        end)
-    end
-
-    local WindowFunctions = {
-        Tabs = {},
-        Builder = nil
-    }
-
-    local function buildGUI()
-        local OpenBtn = Instance.new("TextButton")
-        OpenBtn.Size = UDim2.new(0, 45, 0, 45)
-        OpenBtn.Position = UDim2.new(0, 10, 0.4, 0)
-        OpenBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-        OpenBtn.TextColor3 = Color3.fromRGB(0, 255, 128)
-        OpenBtn.TextSize = 12
-        OpenBtn.Font = Enum.Font.GothamBold
-        OpenBtn.Text = "GUI"
-        OpenBtn.Visible = false
-        OpenBtn.Parent = ScreenGui
-
-        local OpenCorner = Instance.new("UICorner")
-        OpenCorner.CornerRadius = UDim.new(1, 0)
-        OpenCorner.Parent = OpenBtn
-
-        local OpenStroke = InstanceEl problema principal es que al tener activado el sistema de keys (`KeySystem = true`), cuando ejecutas el script **la ventana principal (`loadMainGUI`) no se dibuja de inmediato**, sino que espera a que ingreses la key correcta y hagas clic en "Comprobar Key". Sin embargo, las funciones de las pestañas (`Window:CreateTab`) se ejecutan **inmediatamente** al iniciar el script, antes de que pongas la key, por lo que intentan añadir botones a una ventana que todavía ni siquiera existe en pantalla.
-
-Para solucionarlo de forma definitiva e infalible, he reescrito la librería para que **cree la interfaz completa de golpe** (las pestañas y los elementos se estructuran en segundo plano) y simplemente oculte o muestre el sistema de keys por encima sin romper las referencias.
-
-### 1. Reemplaza todo el código de tu archivo en GitHub (`MainLibrary.lua`) con este:
-
-```lua
--- [[ Librería de UI Optimizada y Animada para Roblox (Delta Mobile) ]] --
-local Library = {}
-
-local Players = game:GetService("Players")
-local CoreGui = game:GetService("CoreGui")
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-
-function Library:CreateWindow(config)
-    config = config or {}
-    local name = config.Name or "Hub"
-    local subtitle = config.Subtitle or ""
-    local useKey = config.KeySystem or false
-    local validKeys = config.Key or {""}
 
     if CoreGui:FindFirstChild("CustomLibraryGUI") then
         CoreGui.CustomLibraryGUI:Destroy()
@@ -172,7 +70,7 @@ function Library:CreateWindow(config)
 
     local WindowFunctions = {}
 
-    -- Botón Flotante para Abrir/Cerrar
+    -- Botón Flotante para abrir la GUI si se minimiza
     local OpenBtn = Instance.new("TextButton")
     OpenBtn.Size = UDim2.new(0, 45, 0, 45)
     OpenBtn.Position = UDim2.new(0, 10, 0.4, 0)
@@ -200,7 +98,6 @@ function Library:CreateWindow(config)
     MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     MainFrame.BorderSizePixel = 0
     MainFrame.ClipsDescendants = true
-    MainFrame.Visible = not useKey -- Si usa Key, inicia oculta hasta ponerla
     MainFrame.Parent = ScreenGui
 
     local MainCorner = Instance.new("UICorner")
@@ -421,6 +318,7 @@ function Library:CreateWindow(config)
         end
 
         function Tab:AddTextBox(placeholder, callback)
+            val = nil -- limpieza segura
             local box = Instance.new("TextBox")
             box.Size = UDim2.new(1, 0, 0, 35)
             box.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -446,62 +344,7 @@ function Library:CreateWindow(config)
         return Tab
     end
 
-    -- Sistema de Key (Overlay)
-    if useKey then
-        local KeyGui = Instance.new("Frame")
-        KeyGui.Size = UDim2.new(0, 260, 0, 160)
-        KeyGui.Position = UDim2.new(0.5, -130, 0.5, -80)
-        KeyGui.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-        KeyGui.Parent = ScreenGui
+    return WindowFunctions
+end
 
-        local kCorner = Instance.new("UICorner")
-        kCorner.CornerRadius = UDim.new(0, 10)
-        kCorner.Parent = KeyGui
-
-        local kStroke = Instance.new("UIStroke")
-        kStroke.Color = Color3.fromRGB(0, 255, 128)
-        kStroke.Thickness = 1.5
-        kStroke.Parent = KeyGui
-
-        local kTitle = Instance.new("TextLabel")
-        kTitle.Size = UDim2.new(1, 0, 0, 35)
-        kTitle.BackgroundTransparency = 1
-        kTitle.TextColor3 = Color3.fromRGB(0, 255, 128)
-        kTitle.TextSize = 13
-        kTitle.Font = Enum.Font.GothamBold
-        kTitle.Text = "Key System - " .. name
-        kTitle.Parent = KeyGui
-
-        local kBox = Instance.new("TextBox")
-        kBox.Size = UDim2.new(0.9, 0, 0, 35)
-        kBox.Position = UDim2.new(0.05, 0, 0, 45)
-        kBox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-        kBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-        kBox.PlaceholderText = "Ingresa tu key..."
-        kBox.TextSize = 12
-        kBox.Font = Enum.Font.Gotham
-        kBox.Parent = KeyGui
-
-        local bCorner = Instance.new("UICorner")
-        bCorner.CornerRadius = UDim.new(0, 6)
-        bCorner.Parent = kBox
-
-        local SubmitBtn = Instance.new("TextButton")
-        SubmitBtn.Size = UDim2.new(0.9, 0, 0, 35)
-        SubmitBtn.Position = UDim2.new(0.05, 0, 0, 95)
-        SubmitBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 90)
-        SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        SubmitBtn.TextSize = 12
-        SubmitBtn.Font = Enum.Font.GothamBold
-        SubmitBtn.Text = "Comprobar Key"
-        SubmitBtn.Parent = KeyGui
-
-        local sCorner = Instance.new("UICorner")
-        sCorner.CornerRadius = UDim.new(0, 6)
-        sCorner.Parent = SubmitBtn
-
-        SubmitBtn.MouseButton1Click:Connect(function()
-            local enteredKey = kBox.Text
-            local success = false
-            for _, k in pairs(validKeys) do
-   
+return Library

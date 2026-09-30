@@ -1,3 +1,6 @@
+-- ========================================================
+-- LIBRERÍA "MiLib" (INCLUIDA DIRECTAMENTE)
+-- ========================================================
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -12,16 +15,12 @@ MiLib.Temas = {
 	Rojo = {Fondo = Color3.fromRGB(30, 15, 15), Pestaña = Color3.fromRGB(50, 25, 25), Elemento = Color3.fromRGB(70, 35, 35), Texto = Color3.fromRGB(255, 240, 240), Acento = Color3.fromRGB(255, 50, 50)}
 }
 
--- Función auxiliar para arrastrar elementos limitando a la pantalla
 local function HacerDragableYLimitado(gui, zonaArrastre)
 	zonaArrastre = zonaArrastre or gui
 	local dragging, dragInput, dragStart, startPos
 
 	local function UpdateInput(input)
 		local delta = input.Position - dragStart
-		local nuevaPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-		
-		-- Limitar dentro de la pantalla
 		local camera = workspace.CurrentCamera
 		if camera then
 			local viewportSize = camera.ViewportSize
@@ -31,10 +30,8 @@ local function HacerDragableYLimitado(gui, zonaArrastre)
 
 			local posXClamped = math.clamp(startPos.X.Offset + delta.X, xMin, xMax)
 			local posYClamped = math.clamp(startPos.Y.Offset + delta.Y, yMin, yMax)
-			nuevaPos = UDim2.new(0, posXClamped, 0, posYClamped)
+			gui.Position = UDim2.new(0, posXClamped, 0, posYClamped)
 		end
-
-		gui.Position = nuevaPos
 	end
 
 	zonaArrastre.InputBegan:Connect(function(input)
@@ -72,14 +69,13 @@ function MiLib:CrearWindow(config)
 	local botonRgb = config.BotonRGB or false
 
 	local ScreenGui = Instance.new("ScreenGui")
-	ScreenGui.Name = "MiLibUI"
+	ScreenGui.Name = "M4TEO_ScreenGui"
 	ScreenGui.ResetOnSpawn = false
 
 	if gethui then ScreenGui.Parent = gethui()
 	elseif syn and syn.protect_gui then syn.protect_gui(ScreenGui); ScreenGui.Parent = game.CoreGui
 	else ScreenGui.Parent = game:GetService("CoreGui") end
 
-	-- Marco Principal (Gui Chica)
 	local MainFrame = Instance.new("Frame")
 	MainFrame.Name = "MainFrame"
 	MainFrame.Size = UDim2.new(0, 420, 0, 280)
@@ -95,13 +91,11 @@ function MiLib:CrearWindow(config)
 
 	HacerDragableYLimitado(MainFrame, MainFrame)
 
-	-- Animación de apertura
 	MainFrame.Size = UDim2.new(0, 0, 0, 0)
 	TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
 		Size = UDim2.new(0, 420, 0, 280)
 	}):Play()
 
-	-- Título y Subtítulo
 	local Header = Instance.new("Frame", MainFrame)
 	Header.Size = UDim2.new(1, 0, 0, 45)
 	Header.BackgroundTransparency = 1
@@ -126,7 +120,6 @@ function MiLib:CrearWindow(config)
 	Subtitle.Font = Enum.Font.SourceSans
 	Subtitle.TextXAlignment = Enum.TextXAlignment.Left
 
-	-- Botones de Control (Minimizar y Cerrar)
 	local ControlHolder = Instance.new("Frame", Header)
 	ControlHolder.Size = UDim2.new(0, 60, 0, 25)
 	ControlHolder.Position = UDim2.new(1, -65, 0, 8)
@@ -154,7 +147,6 @@ function MiLib:CrearWindow(config)
 	local CloseCorner = Instance.new("UICorner", CloseBtn)
 	CloseCorner.CornerRadius = UDim.new(0, 4)
 
-	-- Botón Flotante para reabrir (UI Chica, Dragable, Limitable, RGB)
 	local OpenBtn = Instance.new("TextButton", ScreenGui)
 	OpenBtn.Name = "OpenUI_Button"
 	OpenBtn.Size = UDim2.new(0, 45, 0, 45)
@@ -176,7 +168,6 @@ function MiLib:CrearWindow(config)
 
 	HacerDragableYLimitado(OpenBtn, OpenBtn)
 
-	-- Efecto RGB para el botón flotante (Opcional)
 	local rgbConnection
 	if botonRgb then
 		rgbConnection = RunService.RenderStepped:Connect(function()
@@ -185,7 +176,6 @@ function MiLib:CrearWindow(config)
 		end)
 	end
 
-	-- Lógica de Minimizar y Reabrir
 	MinimizeBtn.MouseButton1Click:Connect(function()
 		local tw = TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
 			Size = UDim2.new(0, 0, 0, 0)
@@ -205,7 +195,6 @@ function MiLib:CrearWindow(config)
 		}):Play()
 	end)
 
-	-- Lógica de Eliminar GUI
 	CloseBtn.MouseButton1Click:Connect(function()
 		local tw = TweenService:Create(MainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
 			Size = UDim2.new(0, 0, 0, 0)
@@ -217,7 +206,6 @@ function MiLib:CrearWindow(config)
 		end)
 	end)
 
-	-- Contenedor de Pestañas (Izquierda)
 	local TabHolder = Instance.new("ScrollingFrame", MainFrame)
 	TabHolder.Size = UDim2.new(0, 110, 1, -90)
 	TabHolder.Position = UDim2.new(0, 10, 0, 45)
@@ -227,13 +215,11 @@ function MiLib:CrearWindow(config)
 	local TabList = Instance.new("UIListLayout", TabHolder)
 	TabList.Padding = UDim.new(0, 5)
 
-	-- Contenedor de Páginas (Derecha)
 	local PageHolder = Instance.new("Frame", MainFrame)
 	PageHolder.Size = UDim2.new(1, -140, 1, -55)
 	PageHolder.Position = UDim2.new(0, 130, 0, 45)
 	PageHolder.BackgroundTransparency = 1
 
-	-- Perfil de Usuario (Abajo a la izquierda)
 	local UserProfile = Instance.new("Frame", MainFrame)
 	UserProfile.Size = UDim2.new(0, 110, 0, 35)
 	UserProfile.Position = UDim2.new(0, 10, 1, -40)
@@ -266,7 +252,6 @@ function MiLib:CrearWindow(config)
 	UserName.TextXAlignment = Enum.TextXAlignment.Left
 	UserName.TextTruncate = Enum.TextTruncate.AtEnd
 
-	-- Contenedor de Notificaciones
 	local NotifHolder = Instance.new("Frame", ScreenGui)
 	NotifHolder.Size = UDim2.new(0, 200, 1, 0)
 	NotifHolder.Position = UDim2.new(1, -210, 0, 10)
@@ -475,5 +460,3 @@ function MiLib:CrearWindow(config)
 
 	return WindowObj
 end
-
-return MiLib
